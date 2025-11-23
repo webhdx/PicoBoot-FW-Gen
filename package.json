@@ -1,0 +1,37 @@
+{
+  "name": "picoboot-fw-gen",
+  "version": "1.0.0",
+  "description": "Client-side firmware generator for PicoBoot project",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "test:watch": "vitest --watch",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "picoboot",
+    "firmware",
+    "gamecube",
+    "rp2040",
+    "rp2350"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@vitejs/plugin-vue": "^6.0.2",
+    "@vitest/coverage-v8": "^4.0.13",
+    "@vitest/ui": "^4.0.13",
+    "happy-dom": "^20.0.10",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.4",
+    "vitest": "^4.0.13",
+    "vue": "^3.5.24"
+  }
+}
