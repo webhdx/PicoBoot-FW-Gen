@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import BuildForm from '@/components/BuildForm.vue'
+import { Toaster } from 'vue-sonner'
 </script>
 
 <template>
   <div class="min-h-screen bg-background">
+    <Toaster position="top-right" :duration="5000" />
     <!-- Header -->
     <header class="border-b">
       <div class="container mx-auto px-4 py-6">

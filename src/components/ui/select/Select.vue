@@ -4,34 +4,41 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
+  SelectItemIndicator,
   SelectItemText,
+  SelectPortal,
   SelectRoot,
   SelectTrigger,
   SelectValue,
-  type SelectRootProps,
+  SelectViewport,
 } from 'radix-vue'
-import { ChevronDown } from 'lucide-vue-next'
+import { Check, ChevronDown } from 'lucide-vue-next'
 import { cn } from '@/lib/utils/cn'
 
-interface Props extends SelectRootProps {
+interface Props {
+  modelValue?: string
   options: Array<{ value: string; label: string }>
   placeholder?: string
+  disabled?: boolean
   class?: string
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  placeholder: 'Select...',
+  disabled: false
+})
+
 const emit = defineEmits<{
   'update:modelValue': [value: string]
 }>()
-
-const delegatedProps = computed(() => {
-  const { options, placeholder, class: _, ...delegated } = props
-  return delegated
-})
 </script>
 
 <template>
-  <SelectRoot v-bind="delegatedProps" @update:model-value="emit('update:modelValue', $event)">
+  <SelectRoot
+    :model-value="modelValue"
+    @update:model-value="emit('update:modelValue', $event)"
+    :disabled="disabled"
+  >
     <SelectTrigger
       :class="
         cn(
@@ -43,22 +50,33 @@ const delegatedProps = computed(() => {
       <SelectValue :placeholder="placeholder" />
       <ChevronDown class="h-4 w-4 opacity-50" />
     </SelectTrigger>
-    <SelectContent
-      class="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
-      :position="'popper'"
-    >
-      <SelectGroup class="p-1">
-        <SelectItem
-          v-for="option in options"
-          :key="option.value"
-          :value="option.value"
-          class="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-        >
-          <SelectItemText>
-            {{ option.label }}
-          </SelectItemText>
-        </SelectItem>
-      </SelectGroup>
-    </SelectContent>
+    <SelectPortal>
+      <SelectContent
+        class="z-[100] max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+        position="popper"
+        :side-offset="4"
+        :collision-padding="8"
+      >
+        <SelectViewport class="p-1">
+          <SelectGroup>
+            <SelectItem
+              v-for="option in options"
+              :key="option.value"
+              :value="option.value"
+              class="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+            >
+              <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                <SelectItemIndicator>
+                  <Check class="h-4 w-4" />
+                </SelectItemIndicator>
+              </span>
+              <SelectItemText>
+                {{ option.label }}
+              </SelectItemText>
+            </SelectItem>
+          </SelectGroup>
+        </SelectViewport>
+      </SelectContent>
+    </SelectPortal>
   </SelectRoot>
 </template>

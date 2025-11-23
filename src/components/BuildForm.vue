@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
+import { toast } from 'vue-sonner'
 import { useBuildStore } from '@/stores/build'
+import { fetchReleases } from '@/lib/github/releases'
 import PicoBootSection from '@/components/sections/PicoBootSection.vue'
 import PlatformSection from '@/components/sections/PlatformSection.vue'
 import PayloadSection from '@/components/sections/PayloadSection.vue'
@@ -10,21 +12,69 @@ import { Button } from '@/components/ui/button'
 
 const store = useBuildStore()
 
-// Mock data for Phase 4 (Gekkoboot only)
-const picobootVersions = ref([
-  { value: 'latest', label: 'Latest (v0.5.0)' },
-  { value: 'v0.5.0', label: 'v0.5.0' },
-  { value: 'v0.4.0', label: 'v0.4.0' },
+// Version lists
+const picobootVersions = ref<Array<{ value: string; label: string }>>([
+  { value: 'latest', label: 'Latest' },
 ])
 
-const gekkobootVersions = ref([
-  { value: 'latest', label: 'Latest (r9.4)' },
-  { value: 'r9.4', label: 'r9.4' },
-  { value: 'r9.3', label: 'r9.3' },
+const gekkobootVersions = ref<Array<{ value: string; label: string }>>([
+  { value: 'latest', label: 'Latest' },
 ])
 
 const picobootLoading = ref(false)
 const gekkobootLoading = ref(false)
+
+// Load versions from GitHub
+onMounted(async () => {
+  console.log('BuildForm mounted, loading versions...')
+
+  // Load PicoBoot versions
+  picobootLoading.value = true
+  try {
+    console.log('Fetching PicoBoot releases...')
+    const releases = await fetchReleases('webhdx', 'PicoBoot')
+    console.log('PicoBoot releases loaded:', releases.length)
+    if (releases.length > 0) {
+      picobootVersions.value = [
+        { value: 'latest', label: `Latest (${releases[0].tag_name})` },
+        ...releases.slice(0, 10).map(r => ({
+          value: r.tag_name,
+          label: r.tag_name
+        }))
+      ]
+      console.log('PicoBoot versions:', picobootVersions.value)
+    }
+  } catch (error) {
+    console.error('Failed to load PicoBoot versions:', error)
+    toast.error('Failed to load PicoBoot versions', {
+      description: 'Using cached data or defaults'
+    })
+  } finally {
+    picobootLoading.value = false
+  }
+
+  // Load Gekkoboot versions
+  gekkobootLoading.value = true
+  try {
+    const releases = await fetchReleases('webhdx', 'gekkoboot')
+    if (releases.length > 0) {
+      gekkobootVersions.value = [
+        { value: 'latest', label: `Latest (${releases[0].tag_name})` },
+        ...releases.slice(0, 10).map(r => ({
+          value: r.tag_name,
+          label: r.tag_name
+        }))
+      ]
+    }
+  } catch (error) {
+    console.error('Failed to load Gekkoboot versions:', error)
+    toast.error('Failed to load Gekkoboot versions', {
+      description: 'Using cached data or defaults'
+    })
+  } finally {
+    gekkobootLoading.value = false
+  }
+})
 
 const handleBuild = async () => {
   await store.buildFirmware()
