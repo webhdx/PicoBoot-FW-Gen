@@ -1,26 +1,32 @@
-<template>
-  <div class="app">
-    <h1>PicoBoot Firmware Generator</h1>
-    <p>Client-side firmware builder for PicoBoot project</p>
-  </div>
-</template>
-
 <script setup lang="ts">
-// Phase 0: Basic setup - more components will be added in future phases
+import BuildForm from '@/components/BuildForm.vue'
 </script>
 
-<style scoped>
-.app {
-  padding: 2rem;
-}
+<template>
+  <div class="min-h-screen bg-background">
+    <!-- Header -->
+    <header class="border-b">
+      <div class="container mx-auto px-4 py-6">
+        <h1 class="text-3xl font-bold flex items-center gap-2">
+          🎮 PicoBoot Firmware Generator
+        </h1>
+        <p class="text-sm text-muted-foreground mt-1">
+          Client-side firmware builder for GameCube PicoBoot project
+        </p>
+      </div>
+    </header>
 
-h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 max-w-3xl">
+      <BuildForm />
+    </main>
 
-p {
-  font-size: 1.2rem;
-  opacity: 0.8;
-}
-</style>
+    <!-- Footer -->
+    <footer class="border-t mt-12">
+      <div class="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
+        <p>Phase 4: Basic UI (Gekkoboot Only)</p>
+        <p class="mt-1">100% client-side • No data leaves your browser</p>
+      </div>
+    </footer>
+  </div>
+</template>

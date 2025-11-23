@@ -49,6 +49,7 @@
     "radix-vue": "^1.9.17",
     "tailwind-merge": "^3.4.0",
     "uf2gen": "^0.1.1",
+    "vue-sonner": "^2.0.9",
     "xz-decompress": "^0.2.3"
   }
 }
